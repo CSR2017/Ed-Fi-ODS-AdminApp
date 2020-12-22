@@ -28,17 +28,7 @@ object BuildAndPublishDatabasePackageToAzure : BuildType ({
         root(DslContext.settingsRoot)
     }  
 
-    steps {
-         powerShell {
-            name = "Create NuGet Package"
-            formatStderrAsError = true
-            executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-            scriptMode = script {
-                content = """
-                    .\build.ps1 -Version %adminApp.version% -BuildCounter %build.counter% -Command PackageDatabaseScripts -Configuration Release
-                """.trimIndent()
-            }
-        }
+    steps {        
         powerShell {
             name = "Lookup Package Name and Version"
             formatStderrAsError = true
