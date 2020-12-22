@@ -43,8 +43,8 @@ object BuildAndPublishDatabasePackageToAzure : BuildType ({
             name = "Lookup Package Name and Version"
             formatStderrAsError = true
             executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-            scriptMode = file {
-                path = """eng\teamcity-get-package-version.ps1 -packageType Database"""
+            scriptMode = script {
+                content = """eng\teamcity-get-package-version.ps1 -packageType Database""".trimIndent()
             }
         }
         powerShell {
