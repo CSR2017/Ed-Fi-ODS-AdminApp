@@ -28,5 +28,5 @@ object AdminAppProject : Project({
     buildType(_self.buildTypes.Deploy)
     buildType(_self.buildTypes.PublishPackage)
     buildType(_self.buildTypes.PublishPackageToAzure)
-    buildType(_self.buildTypes.BuildAndPublishDatabasePackageToAzure)
+    buildType(_self.buildTypes.PublishDatabasePackageToAzure)
 })

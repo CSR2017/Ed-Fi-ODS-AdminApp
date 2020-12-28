@@ -10,8 +10,8 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.swabra
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.powerShell
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.finishBuildTrigger
 
-object BuildAndPublishDatabasePackageToAzure : BuildType ({
-    name = "Build and Publish Database Package to Azure"
+object PublishDatabasePackageToAzure : BuildType ({
+    name = "Publish Database Package to Azure"
     description = "Publishes NuGet package to the Azure feed"
 
     publishArtifacts = PublishMode.SUCCESSFUL
@@ -28,17 +28,7 @@ object BuildAndPublishDatabasePackageToAzure : BuildType ({
         root(DslContext.settingsRoot)
     }  
 
-    steps {  
-        powerShell {
-            name = "Create Database NuGet Package"
-            formatStderrAsError = true
-            executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-            scriptMode = script {
-                content = """
-                    .\build.ps1 -Version %adminApp.version% -BuildCounter %build.counter% -Command PackageDatabaseScripts -Configuration Release
-                """.trimIndent()
-            }
-        }      
+    steps {            
         powerShell {
             name = "Lookup Package Name and Version"
             formatStderrAsError = true
@@ -62,12 +52,7 @@ object BuildAndPublishDatabasePackageToAzure : BuildType ({
                 """.trimIndent()
             }
         }
-    }
-  triggers {
-        finishBuildTrigger {
-            buildType = "${BuildBranch.id}"
-        }
-    }
+    }  
 
     features {
         swabra {
@@ -79,7 +64,6 @@ object BuildAndPublishDatabasePackageToAzure : BuildType ({
         dependency(BuildBranch) {
             snapshot {
             }
-
             artifacts {
                 artifactRules = """
                     +:*pre*.nupkg =>
