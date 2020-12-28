@@ -47,16 +47,7 @@ object BuildAndTestTemplate : Template({
                 """.trimIndent()
             }
         }
-        powerShell {
-            name = "Create Database NuGet Package"
-            formatStderrAsError = true
-            executionMode = BuildStep.ExecutionMode.RUN_ON_SUCCESS
-            scriptMode = script {
-                content = """
-                    .\build.ps1 -Version %adminApp.version% -BuildCounter %build.counter% -Command PackageDatabaseScripts -Configuration Release
-                """.trimIndent()
-            }
-        }
+       
         powerShell {
             name = "Run Unit Tests"
             formatStderrAsError = true
