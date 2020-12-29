@@ -11,15 +11,6 @@ Param(
        $packageType = "Application"     
 )
 
-if("Application" -ieq $packageType)
-{ 
-    SetPackageDetails "Web"   
-}
-else 
-{    
-    SetPackageDetails "Database"   
-}
-
 function SetPackageDetails{
     param (
         [string]
@@ -50,4 +41,13 @@ function SetPackageDetails{
         Write-Host "##teamcity[setParameter name='octopus.release' value='$release']"
         Write-Host "##teamcity[setParameter name='octopus.package' value='$pkg']"
     }
+}
+
+if("Application" -ieq $packageType)
+{ 
+    SetPackageDetails "Web"   
+}
+else 
+{    
+    SetPackageDetails "Database"   
 }
