@@ -12,44 +12,42 @@ Param(
 )
 
 if("Application" -ieq $packageType)
-{
-    # There should only be one file here - the pre-release NuGet package from the upstream build artifacts
-    $pkg = Get-ChildItem -Filter "*Web*pre*.nupkg"
-
-    if (-not $pkg) {
-        throw "No pre-release package found."
-    }
-
-    # Extract the version number
-    $result = $pkg -match "Web\.(\d)\.(\d)\.(\d)\-pre(\d+)\.nupkg"
-
-    if (-not $result) {
-        throw "Package name does not match the expected naming convention."
-    }
-
-    $release = $matches[1]+"."+$matches[2]+"."+$matches[3]+"-pre"+$matches[4]
-
-    Write-Host "##teamcity[setParameter name='nuGet.packageFile' value='$pkg']"
-    Write-Host "##teamcity[setParameter name='nuGet.packageVersion' value='$release']"
-    Write-Host "##teamcity[setParameter name='octopus.release' value='$release']"
-    Write-Host "##teamcity[setParameter name='octopus.package' value='$pkg']"
+{ 
+    SetPackageDetails "Web"   
 }
-else {
-    $pkg = Get-ChildItem -Filter "*Database*pre*.nupkg"
+else 
+{    
+    SetPackageDetails "Database"   
+}
+
+function SetPackageDetails{
+    param (
+        [string]
+        $packageNamePrefix       
+    )
+
+    # There should only be one file here - the pre-release NuGet package from the upstream build artifacts
+    $pkg = Get-ChildItem -Filter "*$packageNamePrefix*pre*.nupkg"
 
     if (-not $pkg) {
-        throw "No pre-release database package found."
+        throw "No pre-release $packageNamePrefix package found."
     }
 
     # Extract the version number
-    $result = $pkg -match "Database\.(\d)\.(\d)\.(\d)\-pre(\d+)\.nupkg"
+    $result = $pkg -match "$packageNamePrefix\.(\d)\.(\d)\.(\d)\-pre(\d+)\.nupkg"
 
     if (-not $result) {
-        throw "Database package name does not match the expected naming convention."
+        throw "$packageNamePrefix package name does not match the expected naming convention."
     }
 
     $release = $matches[1]+"."+$matches[2]+"."+$matches[3]+"-pre"+$matches[4]
 
     Write-Host "##teamcity[setParameter name='nuGet.packageFile' value='$pkg']"
     Write-Host "##teamcity[setParameter name='nuGet.packageVersion' value='$release']"
+
+    if("Web" -ieq $packageNamePrefix)
+    { 
+        Write-Host "##teamcity[setParameter name='octopus.release' value='$release']"
+        Write-Host "##teamcity[setParameter name='octopus.package' value='$pkg']"
+    }
 }
